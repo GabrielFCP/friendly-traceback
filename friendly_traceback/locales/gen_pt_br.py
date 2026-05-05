@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 """Generate Brazilian Portuguese translation file."""
 import re
+import os
+import sys
 from datetime import datetime
 
 translations = {
@@ -51,13 +53,19 @@ translations = {
     "Python keywords cannot be used as identifiers (variable names).\n": "Palavras-chave do Python não podem ser usadas como identificadores (nomes de variáveis).\n",
     "Valid names cannot begin with a number.\n": "Nomes válidos não podem começar com um número.\n",
     "Friendly warning: you have redefined the python builtin `{name}`.\n": "Aviso amigável: você redefiniu o builtin do Python `{name}`.\n",
-    "Did you mean `{number}j`?\nPerhaps you thought that `i` could be used to represent\nthe square root of `-1`. In Python, the symbol used for this is `j`\nand the complex part is written as `some_number` immediately\nfollowed by `j`, with no spaces in between.\n": "Você quis dizer `{number}j`?\nTalvez você tenha pensado que `i` pudesse ser usado para representar\na raiz quadrada de `-1`. Em Python, o símbolo usado para isso é `j`\ne a parte complexa é escrita como `some_number` imediatamente\nseguida por `j`, sem espaços entre eles.\n",
+    "Did you mean `{number}j`?\nPerhaps you thought that `i` could be used to represent\nthe square root of `-1`. In Python, the symbol used for this is `j`\nand the complex part is written as `some_number` immediately\nfollowed by `j`, with no spaces in between.\n": "Você quis dizer `{number}j`?\nTalvez você tenha pensado que `i` pudesse ser usado para representar\na raiz quadrada de `-1`. Em Python, the símbolo usado para isso é `j`\ne a parte complexa é escrita como `some_number` imediatamente\nseguida por `j`, sem espaços entre eles.\n",
     "Did you forget to convert the string `{name}` into {number_type}?\n": "Você esqueceu de converter a cadeia de caracteres `{name}` em {number_type}?\n",
     "You wrote two operators (`{first}` and `{second}`)\nin the wrong order: `{wrong}` instead of `{correct}`.\n": "Você escreveu dois operadores (`{first}` e `{second}`)\nna ordem errada: `{wrong}` em vez de `{correct}`.\n",
     "Perhaps you needed `==` instead of `=`.\nYou likely used an assignment operator `=` instead of an equality operator `==`.\n": "Talvez você tenha precisado de `==` em vez de `=`.\nVocê provavelmente usou um operador de atribuição `=` em vez de um operador de igualdade `==`.\n",
 }
 
-with open('friendly_tb.pot', 'r', encoding='utf-8') as f:
+# Ensure we are in the correct directory or provide full path
+pot_path = os.path.join(os.path.dirname(__file__), 'friendly_tb.pot')
+if not os.path.exists(pot_path):
+    print(f"Error: {pot_path} not found")
+    sys.exit(1)
+
+with open(pot_path, 'r', encoding='utf-8') as f:
     template = f.read()
 
 now = datetime.now().strftime("%Y-%m-%d %H:%M+0000")
@@ -84,15 +92,21 @@ while i < len(lines):
                 msgid_parts.append(match.group(1).replace('\\n', '\n'))
         msgid_text = ''.join(msgid_parts)
 
+        # We skip the original msgstr and any following lines
         if i < len(lines) and lines[i].startswith('msgstr'):
-            out.append(lines[i])
             i += 1
             while i < len(lines) and lines[i].startswith('"'):
                 i += 1
 
         trans = translations.get(msgid_text, '')
+        if not trans and msgid_text.endswith('\n'):
+            trans = translations.get(msgid_text[:-1], '')
+        
+        if msgid_text.startswith("You are dividing by zero"):
+             print(f"DEBUG: Found target msgid: {repr(msgid_text)}")
+             print(f"DEBUG: Found translation: {repr(trans)}")
+
         if trans:
-            out.pop()
             if '\n' in trans:
                 out.append('msgstr ""')
                 parts = trans.split('\n')
@@ -112,8 +126,10 @@ while i < len(lines):
         out.append(line)
         i += 1
 
-with open('pt_BR/LC_MESSAGES/friendly_tb_pt_BR.po', 'w', encoding='utf-8') as f:
-    f.write('\n'.join(out))
+po_path = os.path.join(os.path.dirname(__file__), 'pt_BR/LC_MESSAGES/friendly_tb_pt_BR.po')
+os.makedirs(os.path.dirname(po_path), exist_ok=True)
+with open(po_path, 'w', encoding='utf-8') as f:
+    f.write('\n'.join(out).strip() + '\n')
 
-print("Created pt_BR/LC_MESSAGES/friendly_tb_pt_BR.po")
+print(f"Created {po_path}")
 print(f"Translated {len(translations)} messages")

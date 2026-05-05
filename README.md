@@ -6,6 +6,10 @@
 
 This code repository is for **friendly_traceback**.
 
+This fork includes LLM translated strings into Portuguese for the
+`pt_BR` locale, being a native speaker I can attest for the quality of the Portuguese translations.
+More LLM translations may happen soon.
+
 Unless specified otherwise, from here on, **Friendly** will refer to both
 **friendly** and **friendly_traceback**
 
