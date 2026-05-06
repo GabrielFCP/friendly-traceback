@@ -249,6 +249,10 @@ items_groups["no_tb"] = set(items_groups["explain"])  # used in check_syntax()
 for item_ in items_groups["friendly_tb"]:
     items_groups["no_tb"].discard(item_)
 
+items_groups["explanation"] = set(items_groups["explain"])
+for _tb_key in ("shortened_traceback", "simulated_python_traceback", "original_python_traceback"):
+    items_groups["explanation"].discard(_tb_key)
+
 
 def select_items(group_name: InclusionChoice) -> List[str]:
     items = items_groups[group_name]

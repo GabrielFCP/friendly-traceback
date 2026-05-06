@@ -32,6 +32,7 @@ class _State:
 
     def __init__(self) -> None:
         self._captured: List[str] = []
+        self._last_info: Optional[Info] = None
         self.write_err: Writer = _write_err
         self.installed: bool = False
         self.formatter: Formatter = base_formatters.repl
@@ -100,6 +101,12 @@ class _State:
         if flush:
             self._captured.clear()
         return result
+
+    def get_explanation(self) -> str:
+        """Returns only the friendly explanation paragraphs, without any traceback output."""
+        if self._last_info is None:
+            return ""
+        return self.formatter(self._last_info, include="explanation")
 
     def set_lang(self, lang: str) -> None:
         """Sets the language."""
@@ -253,6 +260,7 @@ class _State:
             saved_current_redirect = self.write_err
             self.set_redirect(redirect=redirect)
 
+        self._last_info = info
         explanation = self.formatter(info, include=self.include)
         self.write_err(explanation)
 

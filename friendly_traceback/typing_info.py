@@ -32,6 +32,7 @@ if sys.version_info >= (3, 8):
         "debug_tb",
         "explain",
         "no_tb",
+        "explanation",
     ]
 
     class Info(TypedDict, total=False):

@@ -187,6 +187,18 @@ def get_output(flush: bool = True) -> str:
     return session.get_captured(flush=flush)
 
 
+def get_explanation() -> str:
+    """Returns only the friendly explanation paragraphs from the last explained
+    traceback, without the ``Traceback (most recent call last):`` header or the
+    ``ErrorType: message`` line.
+
+    Unlike ``get_output()``, this does not consume the capture buffer and can be
+    called multiple times; the result is stable until the next
+    ``explain_traceback()`` call.
+    """
+    return session.get_explanation()
+
+
 def install(
     lang: Optional[str] = None,
     redirect: Union[str, Writer, None] = None,
