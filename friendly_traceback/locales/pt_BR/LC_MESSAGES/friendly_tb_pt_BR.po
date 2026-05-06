@@ -2898,6 +2898,10 @@ msgstr ""
 "mas não objetos do tipo `{obj_type}`.\n"
 
 
+#: syntax_errors\message_analyzer.py:880
+msgid "Did you forget a closing quote?\n"
+msgstr "Por acaso esqueceu de fechar aspas?\n"
+
 #: runtime_errors\type_error.py:1055
 msgid ""
 "{function} does not accept a sequence as an argument.\n"
