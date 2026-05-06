@@ -5157,7 +5157,7 @@ msgid ""
 "It is possible that you forgot a comma between items in a set or dict\n"
 "at the position indicated by ^.\n"
 msgstr ""
-"É possível que você tenha esquecido uma vírgula entre itens em um set ou dict\n"
+"É possível que você tenha esquecido uma vírgula entre itens de um set ou dois pontos entre a chave e valor de um dicionário\n"
 "na posição indicada por ^.\n"
 
 #: syntax_errors\statement_analyzer.py:1504
